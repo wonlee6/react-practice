@@ -9,7 +9,7 @@ class Counter extends Component {
         }
     }
     render() {
-        const { number, fixnumber } = this.state;
+        const { number } = this.state;
         return (
             <div>
                 <h1>{number}</h1>
