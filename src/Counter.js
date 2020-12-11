@@ -1,0 +1,31 @@
+import React, { Component } from 'react';
+
+class Counter extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            number: 0,
+            fixnumber: 0
+        }
+    }
+    render() {
+        const { number, fixnumber } = this.state;
+        return (
+            <div>
+                <h1>{number}</h1>
+                <button onClick={() => {
+                    this.setState({
+                        number: number + 1
+                    },
+                        () => {
+                            console.log('setState 호출');
+                            console.log(this.state);
+                        })
+                }}
+                > + 1</button>
+            </div>
+        );
+    }
+}
+
+export default Counter;
