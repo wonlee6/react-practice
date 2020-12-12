@@ -1,36 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
+function reducer(state, action) {
+    return {
+        ...state,
+        [action.name]: action.value
+    }
+}
 const Info = () => {
 
-    const [name, setName] = useState(0);
-    const [nickname, setNickName] = useState('');
+    // const [name, setName] = useState(0);
+    // const [nickname, setNickName] = useState('');
 
-    useEffect(() => {
-        // console.log('렌더링 완료');
-        // console.log({ name, nickname });
-        //console.log('마운트 될때만 실행');
+    const [state, dispatch] = useReducer(reducer, {
+        name: '',
+        nickname: ''
+    })
 
-        // useeffet) 특정 값이 업데이트 될때만 실행하고 싶을  때
-        console.log('effet');
-        console.log(name);
-        return () => {
-            console.log('cleanup');
-            console.log(name);
-        }
-    }, [name]);
+    const { name, nickname } = state;
 
-    const onChangeName = e => {
-        setName(e.target.value);
-    };
-
-    const onChangeNickname = e => {
-        setNickName(e.target.value);
+    const onChange = e => {
+        dispatch(e.target);
     }
+
+    // useEffect(() => {
+    //     // console.log('렌더링 완료');
+    //     // console.log({ name, nickname });
+    //     //console.log('마운트 될때만 실행');
+
+    //     // useeffet) 특정 값이 업데이트 될때만 실행하고 싶을  때
+    //     console.log('effet');
+    //     console.log(name);
+    //     return () => {
+    //         console.log('cleanup');
+    //         console.log(name);
+    //     }
+    // }, [name]);
+
+    // const onChangeName = e => {
+    //     setName(e.target.value);
+    // };
+
+    // const onChangeNickname = e => {
+    //     setNickName(e.target.value);
+    // }
     return (
         <div>
             <div>
-                <input value={name} onChange={onChangeName} />
-                <input value={nickname} onChange={onChangeNickname} />
+                <input name="name" value={name} onChange={onChange} />
+                <input name="nickname" value={nickname} onChange={onChange} />
             </div>
             <div>
                 <div>
