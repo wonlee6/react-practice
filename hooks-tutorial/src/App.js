@@ -3,7 +3,7 @@ import Counter from './Counter';
 import Info from './Info';
 
 // useState 는 하나의 함수만 관리 가능
-// useEffect
+// useEffect dd
 
 const App = () => {
 
