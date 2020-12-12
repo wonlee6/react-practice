@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
+import useInputs from './UseInputs';
 
 function reducer(state, action) {
     return {
@@ -11,16 +12,21 @@ const Info = () => {
     // const [name, setName] = useState(0);
     // const [nickname, setNickName] = useState('');
 
-    const [state, dispatch] = useReducer(reducer, {
+    // const [state, dispatch] = useReducer(reducer, {
+    //     name: '',
+    //     nickname: ''
+    // })
+
+    const [state, onChange] = useInputs({
         name: '',
         nickname: ''
     })
 
     const { name, nickname } = state;
 
-    const onChange = e => {
-        dispatch(e.target);
-    }
+    // const onChange = e => {
+    //     dispatch(e.target);
+    // }
 
     // useEffect(() => {
     //     // console.log('렌더링 완료');
