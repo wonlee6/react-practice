@@ -20,6 +20,6 @@
  - sass
  - CSS module
  
-4. 일정 관리 만들기
+4. 일정 관리 만들기(
  - 간단한 crud
  - component 최적화
