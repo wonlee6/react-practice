@@ -7860,7 +7860,7 @@
   "resolved" "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.67.tgz"
   "version" "1.1.67"
 
-"node-sass@^4.0.0", "node-sass@^5.0.0":
+"node-sass@^4.0.0":
   "integrity" "sha512-opNgmlu83ZCF792U281Ry7tak9IbVC+AKnXGovcQ8LG8wFaJv6cLnRlc6DIHlmNxWEexB5bZxi9SZ9JyUuOYjw=="
   "resolved" "https://registry.yarnpkg.com/node-sass/-/node-sass-5.0.0.tgz"
   "version" "5.0.0"
