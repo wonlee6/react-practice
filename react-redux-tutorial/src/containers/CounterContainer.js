@@ -1,23 +1,35 @@
 import React, { useCallback } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Counter from '../components/Counter';
-import { decrease, increase } from '../modules/counter';
-import { bindActionCreators } from 'redux';
-
-// useSelect, usedispatch
+import { increase, decrease } from '../modules/counter';
 
 const CounterContainer = () => {
     const number = useSelector(state => state.counter.number);
     const dispatch = useDispatch();
     const onIncrease = useCallback(() => dispatch(increase()), [dispatch]);
     const onDecrease = useCallback(() => dispatch(decrease()), [dispatch]);
+
     return (
-        <Counter number={number}
-            onIncrease={onIncrease}
-            onDecrease={onDecrease}
-        />
-    )
+        <Counter number={number} onIncrease={onIncrease} onDecrease={onDecrease} />
+    );
 };
+
+export default CounterContainer;
+
+
+// // useSelect, usedispatch 사용할 때
+// const CounterContainer = () => {
+//     const number = useSelector(state => state.counter.number);
+//     const dispatch = useDispatch();
+//     const onIncrease = useCallback(() => dispatch(increase()), [dispatch]);
+//     const onDecrease = useCallback(() => dispatch(decrease()), [dispatch]);
+//     return (
+//         <Counter number={number}
+//             onIncrease={onIncrease}
+//             onDecrease={onDecrease}
+//         />
+//     )
+// };
 
 // const mapStateToProps = state => ({
 //     number: state.counter.number,
@@ -35,7 +47,7 @@ const CounterContainer = () => {
 // });
 
 
-export default CounterContainer;
+
 
 
 // redux에서 제공하는 bindActionCreator
