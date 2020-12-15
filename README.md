@@ -45,6 +45,12 @@
  - Context API 익히기
  - 동적 Context 사용하기
  - Consumer 대신 Hook, static contextType 사용하기
+ 
+9. redux 사용해보기
+ - Ducks 패턴으로 만들기
+ - 리듀서 함수 만들기
+ - redux-actions 사용하기
+ - immer 및 useSelector, useDispatch 적용 
 
 
 
