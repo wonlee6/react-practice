@@ -34,7 +34,17 @@
  - 라우터 부가 기능
  
 7. 외부 API 연동하여 뉴스 뷰어 만들기
+ - axios 로 API 호출해서 데이터 받아 오기
+ - 뉴스뷰어 UI 만들기
+ - 데이터 연동
+ - 카테고리 기능 구현
+ - 리액트 라우터 적용
+ - usePromis 커스텀 Hook 만들기
 
+8. Context API
+ - Context API 익히기
+ - 동적 Context 사용하기
+ - Consumer 대신 Hook, static contextType 사용하기
 
 
 
