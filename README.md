@@ -63,4 +63,6 @@
 
 10. learn-redux-middleware
 
+- middleware 흐름, logger
+- redux-thunk
 -

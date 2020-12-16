@@ -9,6 +9,18 @@ const DECREASE = 'counter/DECREASE';
 export const increase = createAction(INCREASE);
 export const decrease = createAction(DECREASE);
 
+// redux-thunk 사용해보기
+// 1초뒤 increase 또는 decrease 함수를 디스패치함
+export const increaseAsync = () => dispatch => {
+    setTimeout(() => {
+        dispatch(increase());
+    }, 1000);
+};
+export const decreaseAsync = () => dispatch => {
+    setTimeout(() => {
+        dispatch(decrease());
+    }, 2000);
+}
 const initialState = 0; // 상태는 꼭 객체일 필요가 없다
 
 const counter = handleActions(
