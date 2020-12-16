@@ -16,7 +16,7 @@ export default connect(
         number: state.counter
     }),
     {
-        increase,
-        decrease
+        increase, // 객체 형태로 넣어 준다
+        decrease // connect 함수가  내부적으로 bindActionCreators 작업을 대신해 준다.
     }
 )(CounterContainer);
