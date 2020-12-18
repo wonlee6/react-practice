@@ -1,0 +1,10 @@
+.Blue {
+  background: blue;
+  font-size: 1.5rem;
+  color: white;
+  height: 128px;
+  width: 128px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
