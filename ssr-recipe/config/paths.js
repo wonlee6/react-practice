@@ -66,7 +66,7 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   ssrIndexJs: resolveApp('src/index.server.js'), // 서버 사이드 렌더링 엔트리 (불러올 파일의 경로)
-  ssrBulid: resolveApp('dist'), // 웹 팩 처리후 저장 경로 (웹팩으로 처리한 뒤 결과물 저장할 경로)
+  ssrBuild: resolveApp('dist'), // 웹 팩 처리후 저장 경로 (웹팩으로 처리한 뒤 결과물 저장할 경로)
   publicUrlOrPath,
 };
 
