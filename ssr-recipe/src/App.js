@@ -1,17 +1,19 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Menu from './components/Menu';
-import BluePage from './pages/BluePage';
 import RedPage from './pages/RedPage';
+import BluePage from './pages/BluePage';
+import UsersPage from './pages/UsersPage';
 
-// dmd
+// dmdsdsd
 const App = () => {
   return (
     <div>
       <Menu />
       <hr />
-      <Route path="/Red" component={RedPage} />
-      <Route path="/Blue" component={BluePage} />
+      <Route path="/red" component={RedPage} />
+      <Route path="/users" component={UsersPage} />
+      <Route path="/blue" component={BluePage} />
     </div>
   );
 };
