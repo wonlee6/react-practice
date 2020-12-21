@@ -2,26 +2,50 @@ import Post from '../../models/post';
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
 
-const {ObjectId} = mongoose.Types;
+const { ObjectId } = mongoose.Types;
 
-export const checkObjectId = (ctx, next) => {
-  const {id} = ctx.params;
-  if(!ObjectId.isValid(id)) {
-    ctx.status = 400;
+
+// {
+//   "title" : "제목",
+//   "body" : "내용",
+//   "tags" : ["태그1", "태그2"]
+// }
+export const checkOwnPost = (ctx, next) => {
+  const {user, post} = ctx.state;
+  if (post.user._id.toString() !== user._id) { // mongoDB에서 조회한 데이터의 i 값을 문자열과 비교 할때는 반드시 toSTring
+    ctx.status = 403;
     return;
   }
   return next();
 }
+
+export const getPostById = async (ctx, next) => {
+  const { id } = ctx.params;
+  if (!ObjectId.isValid(id)) {
+    ctx.status = 400;
+    return;
+  }
+  try {
+    const post = await Post.findById(id);
+    if(!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.state.post = post;
+    return next();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+  return next();
+};
 
 export const write = async (ctx) => {
   const schema = Joi.object().keys({
     // 객체가 다음 필드를 가지고 있음을 검증
     title: Joi.string().required(), //require가 있으면 필수 항목
     body: Joi.string().required(),
-    tags: Joi.array()
-    .items(Joi.string())
-    .required() // 문자열로 이루어진 배열
-  })
+    tags: Joi.array().items(Joi.string()).required(), // 문자열로 이루어진 배열
+  });
 
   // 검증 하고 나서 검증 실패인 경우 에러 처리
   const result = schema.validate(ctx.request.body);
@@ -35,6 +59,7 @@ export const write = async (ctx) => {
     title,
     body,
     tags,
+    user: ctx.state.user,
   });
   try {
     await post.save();
@@ -43,6 +68,9 @@ export const write = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+// GET  http://localhost:4000/api/posts?username=velopert
+// GET  http://localhost:4000/api/posts?tag=태그
 
 export const list = async (ctx) => {
   // query는 문자 열이기 때문에 숫자로 변환해 주어야 한다.
@@ -53,36 +81,44 @@ export const list = async (ctx) => {
     ctx.status = 400;
     return;
   }
+  const  { tag, username } = ctx.query;
+  // tag, username 값이 유효하면 객체 안에 넣고, 그렇지 않으면 넣지 않음
+  const query = {
+    ...(username ? {'user.username' : username} : {}),
+    ...(tag ? { tags : tag} : {})
+  };
   try {
-    const posts = await Post.find()
-    .sort({_id: -1}) // 역순으로 정렬해서 보여줌
-    .limit(10) // 한번에 보이는 숫자 제한
-    .skip((page -1) * 10) // page 지정 (ex) posts?page=2)
-    .lean() // json형태로 조회
-    .exec(); // exec를 붙여줘야 쿼리 실행
-    const postCount = await Post.countDocuments().exec();
+    const posts = await Post.find(query)
+      .sort({ _id: -1 }) // 역순으로 정렬해서 보여줌
+      .limit(10) // 한번에 보이는 숫자 제한
+      .skip((page - 1) * 10) // page 지정 (ex) posts?page=2)
+      .lean() // json형태로 조회
+      .exec(); // exec를 붙여줘야 쿼리 실행
+    const postCount = await Post.countDocuments(query).exec();
     ctx.set('Last-Page', Math.ceil(postCount / 10));
-    ctx.body = posts.map(post => ({
+    ctx.body = posts.map((post) => ({
       ...post,
-      body: post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}...`
-    }))
+      body:
+        post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}...`,
+    }));
   } catch (e) {
     ctx.throw(500, e);
   }
 };
 
-export const read = async (ctx) => {
-  const { id } = ctx.params;
-  try {
-    const post = await Post.findById(id).exec();
-    if (!post) {
-      ctx.status = 404;
-      return;
-    }
-    ctx.body = post;
-  } catch (e) {
-    ctx.throw(500, e);
-  }
+export const read =  (ctx) => {
+  ctx.body = ctx.state.post;
+  // const { id } = ctx.params;
+  // try {
+  //   const post = await Post.findById(id).exec();
+  //   if (!post) {
+  //     ctx.status = 404;
+  //     return;
+  //   }
+  //   ctx.body = post;
+  // } catch (e) {
+  //   ctx.throw(500, e);
+  // }
 };
 
 export const remove = async (ctx) => {
@@ -100,13 +136,13 @@ export const update = async (ctx) => {
   const schema = Joi.object().keys({
     title: Joi.string(),
     body: Joi.string(),
-    tags: Joi.array().items(Joi.string())
-  })
+    tags: Joi.array().items(Joi.string()),
+  });
 
   // 검증 실패 시
   const result = schema.validate(ctx.request.body);
   if (result.error) {
-  //  ctx.status = 400;
+    //  ctx.status = 400;
     ctx.body = result.error;
     return;
   }
