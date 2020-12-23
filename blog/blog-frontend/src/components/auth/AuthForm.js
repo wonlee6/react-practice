@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
 
-// 회원가입 로그인 폼을 보여주는 곳
-// Snippet
+/**
+ * 회원가입 또는 로그인 폼을 보여줍니다.
+ */
+
 const AuthFormBlock = styled.div`
   h3 {
     margin: 0;
@@ -51,12 +53,23 @@ const Footer = styled.div`
 const ButtonWithMarginTop = styled(Button)`
   margin-top: 1rem;
 `;
+
 const textMap = {
   login: '로그인',
   register: '회원가입',
 };
-// type props에 따라 다른 내용이 보이도록 설정
-const AuthForm = ({ type, form, onChange, onSubmit }) => {
+
+/**
+ * 에러를 보여줍니다
+ */
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+`;
+
+const AuthForm = ({ type, form, onChange, onSubmit, error }) => {
   const text = textMap[type];
   return (
     <AuthFormBlock>
@@ -87,7 +100,7 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
             value={form.passwordConfirm}
           />
         )}
-        {/* cyan fullWidth 각각 true 가지고 있음 */}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <ButtonWithMarginTop cyan fullWidth style={{ marginTop: '1rem' }}>
           {text}
         </ButtonWithMarginTop>
