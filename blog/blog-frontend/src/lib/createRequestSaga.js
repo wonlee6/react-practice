@@ -18,6 +18,7 @@ export default function createRequestSaga(type, request) {
       yield put({
         type: SUCCESS,
         payload: response.data,
+        meta: response, // http 헤더 밑 상태 코드를 쉽게 조회 할 수 있다
       });
     } catch (e) {
       yield put({
