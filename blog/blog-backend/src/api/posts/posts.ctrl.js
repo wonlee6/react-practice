@@ -1,23 +1,56 @@
 import Post from '../../models/post';
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
+import sanitizeHtml from 'sanitize-html';
 
 const { ObjectId } = mongoose.Types;
 
+// 악성스크립트 방지위해 특정 태그들만 허용
+const sanitizeOption = {
+  allowedTags: [
+    'h1',
+    'h2',
+    'b',
+    'i',
+    'u',
+    's',
+    'p',
+    'ul',
+    'blockquote',
+    'a',
+    'img',
+  ],
+  allowedAttributes: {
+    a: ['href', 'name', 'target'],
+    img: ['src'],
+    li: ['class'],
+  },
+  allowedSchemes: ['data', 'http'],
+};
 
 // {
 //   "title" : "제목",
 //   "body" : "내용",
 //   "tags" : ["태그1", "태그2"]
 // }
+
+// html 없애고 내용이 길면 200자로 제한
+const removeHtmlAndShorten = (body) => {
+  const filtered = sanitizeHtml(body, {
+    allowedTags: [],
+  });
+  return filtered.length < 200 ? filtered : `${filtered.slice(0, 200)}...`;
+};
+
 export const checkOwnPost = (ctx, next) => {
-  const {user, post} = ctx.state;
-  if (post.user._id.toString() !== user._id) { // mongoDB에서 조회한 데이터의 i 값을 문자열과 비교 할때는 반드시 toSTring
+  const { user, post } = ctx.state;
+  if (post.user._id.toString() !== user._id) {
+    // mongoDB에서 조회한 데이터의 i 값을 문자열과 비교 할때는 반드시 toSTring
     ctx.status = 403;
     return;
   }
   return next();
-}
+};
 
 export const getPostById = async (ctx, next) => {
   const { id } = ctx.params;
@@ -27,7 +60,7 @@ export const getPostById = async (ctx, next) => {
   }
   try {
     const post = await Post.findById(id);
-    if(!post) {
+    if (!post) {
       ctx.status = 404;
       return;
     }
@@ -57,7 +90,7 @@ export const write = async (ctx) => {
   const { title, body, tags } = ctx.request.body;
   const post = new Post({
     title,
-    body,
+    body: sanitizeHtml(body, sanitizeOption),
     tags,
     user: ctx.state.user,
   });
@@ -81,11 +114,11 @@ export const list = async (ctx) => {
     ctx.status = 400;
     return;
   }
-  const  { tag, username } = ctx.query;
+  const { tag, username } = ctx.query;
   // tag, username 값이 유효하면 객체 안에 넣고, 그렇지 않으면 넣지 않음
   const query = {
-    ...(username ? {'user.username' : username} : {}),
-    ...(tag ? { tags : tag} : {})
+    ...(username ? { 'user.username': username } : {}),
+    ...(tag ? { tags: tag } : {}),
   };
   try {
     const posts = await Post.find(query)
@@ -98,15 +131,14 @@ export const list = async (ctx) => {
     ctx.set('Last-Page', Math.ceil(postCount / 10));
     ctx.body = posts.map((post) => ({
       ...post,
-      body:
-        post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}...`,
+      body: removeHtmlAndShorten(post.body),
     }));
   } catch (e) {
     ctx.throw(500, e);
   }
 };
 
-export const read =  (ctx) => {
+export const read = (ctx) => {
   ctx.body = ctx.state.post;
   // const { id } = ctx.params;
   // try {
@@ -146,8 +178,13 @@ export const update = async (ctx) => {
     ctx.body = result.error;
     return;
   }
+  const nextData = { ...ctx.request.body }; // 객체를 복사하고
+  // body 값이 주어졌으면 HTML 필터링
+  if (nextData.body) {
+    nextData.body = sanitizeHtml(nextData, sanitizeOption);
+  }
   try {
-    const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+    const post = await Post.findByIdAndUpdate(id, nextData, {
       new: true, // 이 값을 설정하면 업데이트 된 데이터를 반환
       // false 업데이트되기 전의 데이터를 반환
     }).exec();
