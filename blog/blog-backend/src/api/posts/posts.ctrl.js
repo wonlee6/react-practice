@@ -174,7 +174,7 @@ export const update = async (ctx) => {
   // 검증 실패 시
   const result = schema.validate(ctx.request.body);
   if (result.error) {
-    //  ctx.status = 400;
+    ctx.status = 400;
     ctx.body = result.error;
     return;
   }
